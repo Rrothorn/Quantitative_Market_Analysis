@@ -1,0 +1,84 @@
+-- ============================================
+-- Feature Engineering Query
+-- ============================================
+-- Calculates:
+-- - Returns
+-- - Moving averages
+-- - Donchian channels
+-- - State price (range-normalised price)
+-- ============================================
+
+WITH base AS (
+    SELECT
+        symbol,
+        datetime,
+        open,
+        high,
+        low,
+        close,
+
+        -- Previous close
+        LAG(close) OVER (
+            PARTITION BY symbol
+            ORDER BY datetime
+        ) AS prev_close
+
+    FROM ss_daily
+),
+
+quarterly AS (
+    SELECT
+        symbol,
+        DATE_TRUNC('quarter', datetime) AS quarter,
+        MAX(high) AS q_high,
+        MIN(low) AS q_low
+    FROM ss_daily
+    GROUP BY symbol, quarter
+),
+
+quarterly_lag AS (
+    SELECT
+        symbol,
+        quarter,
+        LAG(q_high) OVER (PARTITION BY symbol ORDER BY quarter) AS prev_q_high,
+        LAG(q_low)  OVER (PARTITION BY symbol ORDER BY quarter) AS prev_q_low
+    FROM quarterly
+)
+
+SELECT
+    b.symbol,
+    b.datetime,
+    b.close,
+
+    -- Daily return
+    b.close / b.prev_close - 1 AS pct_return,
+
+    -- 21-day moving average
+    AVG(b.close) OVER (
+        PARTITION BY b.symbol
+        ORDER BY datetime
+        ROWS BETWEEN 20 PRECEDING AND CURRENT ROW
+    ) AS ma_21,
+
+    -- Donchian channel (96)
+    MAX(b.high) OVER (
+        PARTITION BY b.symbol
+        ORDER BY datetime
+        ROWS BETWEEN 95 PRECEDING AND CURRENT ROW
+    ) AS dc_high_96,
+
+    MIN(b.low) OVER (
+        PARTITION BY b.symbol
+        ORDER BY datetime
+        ROWS BETWEEN 95 PRECEDING AND CURRENT ROW
+    ) AS dc_low_96,
+
+    -- State price (normalized within prior quarter range)
+    2 * (b.close - q.prev_q_low)
+      / NULLIF(q.prev_q_high - q.prev_q_low, 0)
+      - 1 AS state_price
+
+FROM base b
+LEFT JOIN quarterly_lag q
+    ON b.symbol = q.symbol
+   AND DATE_TRUNC('quarter', b.datetime) = q.quarter;

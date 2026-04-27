@@ -1,0 +1,65 @@
+<html>
+<head>
+<style>
+    body { font-family: Arial; }
+
+    table {
+        border-collapse: collapse;
+        width: 70%;
+        margin: auto;
+    }
+
+    th {
+        background-color: black;
+        color: gold;
+        padding: 10px;
+    }
+
+    td {
+        padding: 8px;
+        text-align: center;
+        border: 1px solid #ddd;
+    }
+</style>
+</head>
+
+<body>
+
+<div style="text-align:center;">
+    <h1>Daily Market Report</h1>
+    <p>Example Output</p>
+</div>
+
+<table>
+<tr>
+    <th>Symbol</th>
+    <th>Last Price</th>
+    <th>State Price</th>
+    <th>Trend</th>
+</tr>
+
+<tr>
+    <td>AAPL</td>
+    <td>185.32</td>
+    <td>0.82</td>
+    <td style="background-color:#90EE90; font-weight:bold;">Bull</td>
+</tr>
+
+<tr>
+    <td>TSLA</td>
+    <td>172.11</td>
+    <td>-0.55</td>
+    <td style="background-color:#FF7F7F; font-weight:bold;">Bear</td>
+</tr>
+
+<tr>
+    <td>MSFT</td>
+    <td>412.67</td>
+    <td>1.32</td>
+    <td style="background-color:#006400; color:white; font-weight:bold;">Strong Bull</td>
+</tr>
+
+</table>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+ingestion:
+  countries:
+    - CAN
+    - DEU
+    - FR
+    - ITA
+    - NL
+    - HK
+    - JP
+    - SGD
+    - IND
+    - UK
+    - US
+
+  max_parallel: 10
+  timeout: 90
+
+database:
+  connection_string: "postgresql+psycopg2://user:password@localhost:5432/market_data"
+
+report:
+  output_path: "output/report.pdf" 
