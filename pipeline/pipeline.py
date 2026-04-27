@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Apr 21 19:54:58 2026
 
-@author: Gebruiker
-"""
 
 import ib_market_data_ingestion
 import create_ss_signals
